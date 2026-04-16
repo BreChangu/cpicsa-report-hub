@@ -1,21 +1,15 @@
 <main class="main-container">
   <header class="app-header">
-    <div class="logo-placeholder">
-      Auditoria de Estructuras
-    </div>
+    <div class="logo-placeholder">Auditoría de Estructuras</div>
   </header>
 
   <section class="content">
-    <app-smart-dropzone
-      (filesDropped)="onFilesReceived($event)">
-    </app-smart-dropzone>
+    <app-smart-dropzone (filesDropped)="onFilesReceived($event)"></app-smart-dropzone>
 
     @if (evidences().length > 0) {
       <div class="curation-board">
         <div class="board-header">
-          <h2>
-            Mesa de Curaduria ({{ evidences().length }})
-          </h2>
+          <h2>Mesa de Curaduría ({{ evidences().length }})</h2>
 
           <div class="report-actions">
             <button
@@ -26,7 +20,6 @@
             >
               {{ isGeneratingPdf() ? 'Generando PDF...' : 'Generar PDF' }}
             </button>
-
             <button
               class="btn-primary-action"
               type="button"
@@ -38,29 +31,40 @@
           </div>
         </div>
 
+        <div class="report-config-bar">
+          <label class="title-field">
+            <span>Título del Reporte:</span>
+            <input
+              type="text"
+              [ngModel]="reportTitle()"
+              (ngModelChange)="reportTitle.set($event)"
+              placeholder="Ej. REPORTE DE PUNTOS CRÍTICOS CHEDRAUI MOLINA..."
+            />
+          </label>
+        </div>
+
         <div class="bulk-toolbar">
           <label class="bulk-select-toggle">
             <input
               type="checkbox"
               [checked]="areAllSelected()"
               (change)="toggleSelectAll($any($event.target).checked)"
-            >
+            />
             Seleccionar todas
           </label>
 
-          <span class="bulk-count">
-            {{ selectedCount() }} seleccionadas
-          </span>
+          <span class="bulk-count">{{ selectedCount() }} seleccionadas</span>
+
+          <span class="divider">|</span>
 
           <label class="bulk-date-field">
-            <span>Fecha para seleccionadas</span>
+            <span>Fecha masiva:</span>
             <input
               type="date"
               [ngModel]="bulkCapturedDate()"
               (ngModelChange)="bulkCapturedDate.set($event)"
-            >
+            />
           </label>
-
           <button
             class="btn-inline-tool"
             type="button"
@@ -68,6 +72,32 @@
             (click)="applyBulkCapturedDate()"
           >
             Aplicar fecha
+          </button>
+
+          <span class="divider">|</span>
+
+          <label class="bulk-date-field">
+            <span>Sección Múltiple:</span>
+            <input
+              type="text"
+              list="cat-list"
+              [ngModel]="bulkCategory()"
+              (ngModelChange)="bulkCategory.set($event)"
+              placeholder="Nueva o existente..."
+            />
+            <datalist id="cat-list">
+              @for (cat of dynamicCategories(); track cat) {
+                <option [value]="cat"></option>
+              }
+            </datalist>
+          </label>
+          <button
+            class="btn-inline-tool"
+            type="button"
+            [disabled]="!hasSelectedEvidences()"
+            (click)="applyBulkCategory()"
+          >
+            Aplicar sección
           </button>
         </div>
 
@@ -84,51 +114,39 @@
                     type="checkbox"
                     [checked]="item.selected"
                     (change)="toggleEvidenceSelection(item.id)"
-                  >
-                  Seleccionar
+                  />
                 </label>
 
-                <label class="card-date-field">
-                  <span>Fecha</span>
-                  <input
-                    type="date"
-                    [(ngModel)]="item.capturedDate"
-                  >
-                </label>
+                <input
+                  type="text"
+                  list="cat-list"
+                  [(ngModel)]="item.category"
+                  class="mini-category-input"
+                  placeholder="SECCIÓN..."
+                />
+
+                <input type="date" [(ngModel)]="item.capturedDate" class="mini-date" />
               </div>
 
-              <div class="image-container">
+              <div class="image-container" [hidden]="item.showCropper">
                 <button
                   class="image-preview-hitbox"
                   type="button"
-                  [attr.aria-label]="item.isCropped ? 'Ver imagen recortada' : 'Ver imagen original'"
+                  [attr.aria-label]="
+                    item.isCropped ? 'Ver imagen recortada' : 'Ver imagen original'
+                  "
                   (click)="openPreview(item)"
-                >
-                </button>
-
+                ></button>
                 <img
                   [src]="item.previewUrl"
                   [class.image-fit-contain]="item.isCropped"
                   alt="Evidencia"
-                >
+                />
 
                 <div class="image-actions">
-                  <button
-                    class="btn-action-tool btn-view-tool"
-                    type="button"
-                    (click)="openPreview(item)"
-                  >
-                    {{ item.isCropped ? 'Ver recorte' : 'Ver foto' }}
-                  </button>
-
-                  <button
-                    class="btn-action-tool"
-                    type="button"
-                    (click)="toggleCropper(item.id)"
-                  >
+                  <button class="btn-action-tool" type="button" (click)="toggleCropper(item.id)">
                     {{ item.showCropper ? 'Cancelar' : 'Ajustar foto' }}
                   </button>
-
                   <button
                     class="btn-action-tool btn-danger-tool"
                     type="button"
@@ -139,42 +157,29 @@
                 </div>
 
                 @if (item.isCropped) {
-                  <span class="crop-status-badge">
-                    RECORTADA
-                  </span>
+                  <span class="crop-status-badge">RECORTADA</span>
                 }
-
                 @if (item.isProcessing) {
-                  <div class="scanner-overlay">
-                    <span class="scanner-text">
-                      PROCESANDO...
-                    </span>
-                  </div>
+                  <div class="scanner-overlay"><span class="scanner-text">PROCESANDO...</span></div>
                 }
               </div>
 
               @if (item.showCropper) {
-                <div class="cropper-wrapper">
+                <div class="cropper-global-wrapper">
                   <image-cropper
-                    [imageFile]="item.reportFile"
+                    [imageFile]="item.sourceFile"
                     [maintainAspectRatio]="false"
                     [alignImage]="'center'"
                     output="blob"
                     format="png"
-                    (imageCropped)="onImageCropped($event, item.id)">
+                    (imageCropped)="onImageCropped($event, item.id)"
+                  >
                   </image-cropper>
 
                   <div class="cropper-footer">
-                    <p class="helper-text">
-                      Selecciona el area de interes para la imagen final. El texto se conserva desde la captura original.
-                    </p>
-
-                    <button
-                      class="btn-confirm-crop"
-                      type="button"
-                      (click)="confirmCrop(item.id)"
-                    >
-                      Confirmar recorte
+                    <p class="helper-text">Selecciona el área de interés para la imagen final.</p>
+                    <button class="btn-confirm-crop" type="button" (click)="confirmCrop(item.id)">
+                      CONFIRMAR RECORTE
                     </button>
                   </div>
                 </div>
@@ -182,10 +187,7 @@
 
               <div class="text-container">
                 <div class="text-header">
-                  <label class="label-heading">
-                    Descripcion:
-                  </label>
-
+                  <label class="label-heading">Descripción:</label>
                   <button
                     class="btn-inline-tool"
                     type="button"
@@ -195,12 +197,11 @@
                     {{ item.isProcessing ? 'Leyendo...' : 'Releer texto' }}
                   </button>
                 </div>
-
                 <textarea
                   [(ngModel)]="item.description"
                   class="description-input"
-                  placeholder="Texto extraido...">
-                </textarea>
+                  placeholder="Texto extraído..."
+                ></textarea>
               </div>
             </div>
           }
@@ -211,39 +212,19 @@
 </main>
 
 @if (previewingEvidence(); as activePreview) {
-  <div
-    class="preview-modal"
-    (click)="closePreview()"
-  >
-    <div
-      class="preview-dialog"
-      (click)="$event.stopPropagation()"
-    >
+  <div class="preview-modal" (click)="closePreview()">
+    <div class="preview-dialog" (click)="$event.stopPropagation()">
       <div class="preview-header">
         <div>
           <p class="preview-eyebrow">
             {{ activePreview.isCropped ? 'Recorte final' : 'Imagen original' }}
           </p>
-
-          <h3 class="preview-title">
-            {{ activePreview.reportFile.name }}
-          </h3>
+          <h3 class="preview-title">{{ activePreview.reportFile.name }}</h3>
         </div>
-
-        <button
-          class="preview-close"
-          type="button"
-          (click)="closePreview()"
-        >
-          Cerrar
-        </button>
+        <button class="preview-close" type="button" (click)="closePreview()">Cerrar</button>
       </div>
-
       <div class="preview-image-frame">
-        <img
-          [src]="activePreview.previewUrl"
-          [alt]="activePreview.reportFile.name"
-        >
+        <img [src]="activePreview.previewUrl" [alt]="activePreview.reportFile.name" />
       </div>
     </div>
   </div>
