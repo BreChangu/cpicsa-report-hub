@@ -1,0 +1,64 @@
+// Variables locales (Idealmente las moveríamos a un _variables.scss global después)
+$midnight-blue: #1A2238;
+$champagne-gold: #D4AF37;
+$bg-light: #FAFAFB;
+$text-muted: #6B7280;
+$border-color: #E5E7EB;
+$transition-speed: 0.3s ease;
+
+.dropzone-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 2rem;
+  background-color: $bg-light;
+  border: 2px dashed $border-color;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all $transition-speed;
+  
+  &:hover {
+    border-color: rgba($midnight-blue, 0.4);
+    background-color: white;
+  }
+
+  // Estado activo (Cuando el archivo está sobre la zona)
+  &.drag-active {
+    border-color: $midnight-blue;
+    background-color: rgba($midnight-blue, 0.02);
+    transform: scale(1.01);
+
+    .icon-wrapper {
+      color: $midnight-blue;
+      transform: translateY(-5px);
+    }
+  }
+}
+
+.dropzone-content {
+  text-align: center;
+  pointer-events: none; // Evita que el texto interfiera con el drag & drop
+
+  .icon-wrapper {
+    color: $text-muted;
+    margin-bottom: 1rem;
+    transition: transform $transition-speed, color $transition-speed;
+  }
+
+  .title {
+    font-family: 'Arial', sans-serif;
+    font-size: 1.25rem;
+    color: $midnight-blue;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+  }
+
+  .subtitle {
+    font-family: 'Arial', sans-serif;
+    font-size: 0.875rem;
+    color: $text-muted;
+    max-width: 350px;
+    margin: 0 auto;
+  }
+}
