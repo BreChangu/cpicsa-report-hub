@@ -1,5 +1,7 @@
+/* 👇 ADN DE COLOR CPICSA 👇 */
 $primary-dark: #1e293b;
-$accent-color: #d4af37;
+$brand-green: #8dc63f; /* Verde Corporativo CPICSA */
+$brand-blue: #00a0e3; /* Azul Corporativo CPICSA */
 $border-soft: #e2e8f0;
 $surface-soft: #f8fafc;
 $danger-color: #ef4444;
@@ -9,18 +11,15 @@ $danger-color: #ef4444;
   font-family: 'Segoe UI', Arial, sans-serif;
   background-color: #ffffff;
 }
-
 .main-container {
   max-width: 1240px;
   margin: 0 auto;
   padding: 2rem;
 }
-
 .app-header {
   margin-bottom: 2rem;
   border-bottom: 1px solid $border-soft;
   padding-bottom: 1rem;
-
   .logo-placeholder {
     font-weight: 800;
     color: $primary-dark;
@@ -39,13 +38,11 @@ $danger-color: #ef4444;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
   display: flex;
   align-items: center;
-
   .title-field {
     display: flex;
     align-items: center;
     gap: 1.5rem;
     width: 100%;
-
     span {
       font-weight: 700;
       color: $primary-dark;
@@ -54,7 +51,6 @@ $danger-color: #ef4444;
       text-transform: uppercase;
       letter-spacing: 0.5px;
     }
-
     input {
       flex: 1;
       border: 2px solid $border-soft;
@@ -66,17 +62,15 @@ $danger-color: #ef4444;
       color: $primary-dark;
       transition: all 0.2s ease;
       background: $surface-soft;
-
       &::placeholder {
         color: #94a3b8;
         font-weight: normal;
       }
-
       &:focus {
         outline: none;
-        border-color: $accent-color;
+        border-color: $brand-green;
         background: #ffffff;
-        box-shadow: 0 0 0 3px rgba($accent-color, 0.15);
+        box-shadow: 0 0 0 3px rgba($brand-green, 0.15);
       }
     }
   }
@@ -87,22 +81,20 @@ $danger-color: #ef4444;
   padding-top: 2rem;
   border-top: 1px solid $border-soft;
 }
-
 .board-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   gap: 1rem;
   margin-bottom: 1.25rem;
-
   h2 {
     color: $primary-dark;
     margin: 0;
     font-weight: 800;
   }
-
+  /* 👇 BOTONES DE ACCIÓN PRINCIPAL (VERDE ACCIÓN CPICSA) 👇 */
   .btn-primary-action {
-    background-color: $accent-color;
+    background-color: $brand-green;
     color: $primary-dark;
     border: none;
     padding: 0.8rem 1.5rem;
@@ -110,19 +102,16 @@ $danger-color: #ef4444;
     border-radius: 8px;
     cursor: pointer;
     transition: all 0.2s;
-
     &:hover {
-      background: #fcd34d;
+      background: #a2e85a;
       transform: translateY(-1px);
     }
-
     &:disabled {
       cursor: wait;
       opacity: 0.7;
       transform: none;
     }
   }
-
   .btn-secondary-action {
     background: #fff;
     border: 1px solid $border-soft;
@@ -131,23 +120,64 @@ $danger-color: #ef4444;
     }
   }
 }
-
 .report-actions {
   display: flex;
   gap: 0.75rem;
   flex-wrap: wrap;
 }
 
+/* 👇 REDISEÑO DE BARRA MASIVA (ESTILO CPICSA) 👇 */
 .bulk-toolbar {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: 1.5rem;
   flex-wrap: wrap;
   padding: 1rem 1.25rem;
   margin-bottom: 1.5rem;
   border: 1px solid $border-soft;
   border-radius: 12px;
   background: $surface-soft;
+}
+.toolbar-grouped-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.tool-input {
+  border: 1px solid $border-soft;
+  border-radius: 6px;
+  padding: 6px 10px;
+  font-size: 12px;
+  font-weight: 700;
+  color: $primary-dark;
+  outline: none;
+  background: #fff;
+  transition: all 0.2s;
+  &:focus {
+    border-color: $brand-blue;
+    box-shadow: 0 0 0 2px rgba($brand-blue, 0.1);
+  }
+}
+
+.btn-inline-tool {
+  border: 1px solid $border-soft;
+  background: #fff;
+  color: $primary-dark;
+  border-radius: 6px;
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  &:hover:not(:disabled) {
+    background: $surface-soft;
+    border-color: rgba($primary-dark, 0.3);
+  }
+  &:disabled {
+    cursor: wait;
+    opacity: 0.5;
+  }
 }
 
 .bulk-select-toggle {
@@ -158,35 +188,10 @@ $danger-color: #ef4444;
   color: $primary-dark;
   font-size: 0.9rem;
 }
-
 .bulk-count {
   color: #64748b;
   font-size: 0.85rem;
   font-weight: 600;
-}
-
-.divider {
-  color: #cbd5e1;
-  font-weight: 300;
-}
-
-.bulk-date-field {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.6rem;
-  color: $primary-dark;
-  font-weight: 700;
-  font-size: 0.9rem;
-
-  input {
-    border: 1px solid $border-soft;
-    border-radius: 6px;
-    padding: 0.4rem 0.6rem;
-    font: inherit;
-    color: $primary-dark;
-    background: #fff;
-    font-size: 0.85rem;
-  }
 }
 
 .evidence-grid {
@@ -194,7 +199,6 @@ $danger-color: #ef4444;
   grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
   gap: 1.5rem;
 }
-
 .evidence-card {
   background: white;
   border: 1px solid $border-soft;
@@ -202,15 +206,13 @@ $danger-color: #ef4444;
   overflow: hidden;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
   transition: all 0.2s;
-
   &.editing {
-    border: 2px solid $accent-color;
-    box-shadow: 0 10px 15px -3px rgba($accent-color, 0.2);
+    border: 2px solid $brand-green;
+    box-shadow: 0 10px 15px -3px rgba($brand-green, 0.2);
   }
-
   &.selected {
-    box-shadow: 0 0 0 3px rgba($accent-color, 0.4);
-    border-color: $accent-color;
+    box-shadow: 0 0 0 3px rgba($brand-green, 0.4);
+    border-color: $brand-green;
   }
 }
 
@@ -222,21 +224,18 @@ $danger-color: #ef4444;
   padding: 0.75rem 1rem;
   border-bottom: 1px solid $border-soft;
   background: $surface-soft;
-
   .card-select {
     display: flex;
     align-items: center;
     margin: 0;
     cursor: pointer;
-
     input {
       width: 16px;
       height: 16px;
       cursor: pointer;
-      accent-color: $accent-color;
+      accent-color: $brand-green;
     }
   }
-
   .mini-category-input {
     width: 100%;
     text-align: center;
@@ -249,14 +248,12 @@ $danger-color: #ef4444;
     background: #fff;
     text-transform: uppercase;
     transition: all 0.2s;
-
     &:focus {
       outline: none;
-      border-color: $accent-color;
-      box-shadow: 0 0 0 2px rgba($accent-color, 0.15);
+      border-color: $brand-green;
+      box-shadow: 0 0 0 2px rgba($brand-green, 0.15);
     }
   }
-
   .mini-date {
     font-size: 11px;
     padding: 4px 6px;
@@ -265,6 +262,11 @@ $danger-color: #ef4444;
     font-weight: 600;
     color: $primary-dark;
     background: #fff;
+    &:focus {
+      outline: none;
+      border-color: $brand-green;
+      box-shadow: 0 0 0 2px rgba($brand-green, 0.1);
+    }
   }
 }
 
@@ -273,7 +275,6 @@ $danger-color: #ef4444;
   height: 220px;
   background: #0f172a;
   overflow: hidden;
-
   .image-preview-hitbox {
     position: absolute;
     inset: 0;
@@ -283,14 +284,12 @@ $danger-color: #ef4444;
     background: transparent;
     cursor: zoom-in;
   }
-
   img {
     width: 100%;
     height: 100%;
     object-fit: cover;
     display: block;
   }
-
   .image-fit-contain {
     object-fit: contain;
     background: linear-gradient(135deg, rgba($primary-dark, 0.6), rgba($primary-dark, 0.9));
@@ -304,7 +303,6 @@ $danger-color: #ef4444;
   z-index: 3;
   display: flex;
   gap: 0.4rem;
-
   .btn-action-tool {
     background: rgba(15, 23, 42, 0.75);
     color: #fff;
@@ -316,14 +314,12 @@ $danger-color: #ef4444;
     font-weight: 600;
     backdrop-filter: blur(4px);
     transition: all 0.2s;
-
     &:hover {
       background: rgba(15, 23, 42, 1);
-      color: $accent-color;
-      border-color: $accent-color;
+      color: $brand-blue;
+      border-color: $brand-blue;
     }
   }
-
   .btn-danger-tool {
     &:hover {
       background: $danger-color;
@@ -333,12 +329,13 @@ $danger-color: #ef4444;
   }
 }
 
+/* 👇 CROP STATUS BADGE (VERDE CPICSA) 👇 */
 .crop-status-badge {
   position: absolute;
   left: 10px;
   bottom: 10px;
   z-index: 2;
-  background: rgba($accent-color, 0.95);
+  background: rgba($brand-green, 0.95);
   color: $primary-dark;
   font-size: 10px;
   font-weight: 800;
@@ -347,16 +344,13 @@ $danger-color: #ef4444;
   border-radius: 4px;
 }
 
-/* =========================================================
-   🔥 FIX DEFINITIVO DEL CROPPER (LA JAULA DE HIERRO) 🔥 
-   ========================================================= */
+/* 🔥 FIX DEFINITIVO DEL CROPPER (LA JAULA DE HIERRO) 🔥 */
 .cropper-global-wrapper {
   background: #0f172a;
-  overflow: hidden; /* Esto es el muro de contención */
+  overflow: hidden;
   border-bottom: 1px solid $border-soft;
 }
 
-/* El misil ::ng-deep obliga a la librería a respetar la altura */
 ::ng-deep .cropper-global-wrapper image-cropper {
   display: block !important;
   width: 100% !important;
@@ -368,44 +362,63 @@ $danger-color: #ef4444;
   padding: 15px;
   background: #f8fafc;
   text-align: center;
-  border-top: 1px solid rgba(0,0,0,0.1);
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
 
-  .helper-text { 
-    font-size: 11px; 
-    color: #64748b; 
-    margin-bottom: 12px; 
+  .helper-text {
+    font-size: 11px;
+    color: #64748b;
+    margin-bottom: 12px;
   }
 
-  .btn-confirm-crop { 
-    background: $accent-color; 
-    color: $primary-dark; 
-    border: none; 
-    padding: 10px 24px; 
-    border-radius: 6px; 
-    font-weight: 800; 
-    cursor: pointer; 
-    width: 100%;
-    text-transform: uppercase; 
-    font-size: 12px; 
-    transition: all 0.2s;
-    
-    &:hover { 
-      background: #fcd34d; 
+  /* 👇 BOTONES DEL CROPPER ESTILIZADOS CORPORATIVO 👇 */
+  .cropper-actions {
+    display: flex;
+    gap: 10px;
+
+    button {
+      flex: 1;
+      padding: 10px;
+      border-radius: 6px;
+      font-weight: 800;
+      cursor: pointer;
+      text-transform: uppercase;
+      font-size: 11px;
+      letter-spacing: 0.5px;
+      transition: all 0.2s;
+    }
+
+    /* 👇 BOTÓN CANCELAR (AZUL SECUNDARIO CPICSA) 👇 */
+    .btn-cancel-crop {
+      background: #ffffff;
+      color: $brand-blue;
+      border: 1px solid $border-soft;
+      &:hover {
+        background: #e0f2fe;
+        border-color: #7dd3fc;
+      }
+    }
+
+    /* 👇 BOTÓN CONFIRMAR (VERDE PRIMARIO CPICSA) 👇 */
+    .btn-confirm-crop {
+      background: $brand-green;
+      color: $primary-dark;
+      border: 1px solid $brand-green;
+      &:hover {
+        background: #a2e85a;
+        transform: translateY(-1px);
+      }
     }
   }
 }
-/* ========================================================= */
 
 .text-container {
   padding: 1rem 1.25rem 1.25rem;
-
   .text-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 8px;
   }
-
   .label-heading {
     font-size: 11px;
     font-weight: 800;
@@ -426,12 +439,10 @@ $danger-color: #ef4444;
   font-weight: 700;
   cursor: pointer;
   transition: all 0.2s;
-
   &:hover:not(:disabled) {
     background: $surface-soft;
     border-color: rgba($primary-dark, 0.3);
   }
-
   &:disabled {
     cursor: wait;
     opacity: 0.5;
@@ -450,12 +461,11 @@ $danger-color: #ef4444;
   resize: none;
   background: $surface-soft;
   transition: all 0.2s;
-
   &:focus {
-    border-color: $accent-color;
+    border-color: $brand-blue;
     outline: none;
     background: #fff;
-    box-shadow: 0 0 0 2px rgba($accent-color, 0.1);
+    box-shadow: 0 0 0 2px rgba($brand-blue, 0.1);
   }
 }
 
@@ -469,9 +479,8 @@ $danger-color: #ef4444;
   align-items: center;
   justify-content: center;
   backdrop-filter: blur(2px);
-
   .scanner-text {
-    color: $accent-color;
+    color: $brand-green;
     font-weight: 800;
     letter-spacing: 2px;
     font-size: 12px;
@@ -489,7 +498,6 @@ $danger-color: #ef4444;
   background: rgba(15, 23, 42, 0.85);
   backdrop-filter: blur(8px);
 }
-
 .preview-dialog {
   width: min(960px, 100%);
   max-height: calc(100vh - 4rem);
@@ -500,7 +508,6 @@ $danger-color: #ef4444;
   overflow: hidden;
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
 }
-
 .preview-header {
   display: flex;
   justify-content: space-between;
@@ -509,7 +516,6 @@ $danger-color: #ef4444;
   padding: 1.25rem 1.5rem;
   border-bottom: 1px solid $border-soft;
 }
-
 .preview-eyebrow {
   margin: 0 0 0.25rem;
   font-size: 0.75rem;
@@ -518,14 +524,12 @@ $danger-color: #ef4444;
   color: #64748b;
   font-weight: 700;
 }
-
 .preview-title {
   margin: 0;
   color: $primary-dark;
   font-size: 1.1rem;
   font-weight: 700;
 }
-
 .preview-close {
   border: 1px solid $border-soft;
   background: #fff;
@@ -535,17 +539,14 @@ $danger-color: #ef4444;
   cursor: pointer;
   font-weight: 700;
   transition: all 0.2s;
-
   &:hover {
     background: $surface-soft;
   }
 }
-
 .preview-image-frame {
   padding: 1.5rem;
   background: $surface-soft;
   overflow: auto;
-
   img {
     display: block;
     width: 100%;
@@ -562,13 +563,11 @@ $danger-color: #ef4444;
     flex-direction: column;
     align-items: flex-start;
     gap: 0.5rem;
-
     input {
       width: 100%;
       box-sizing: border-box;
     }
   }
-
   .bulk-toolbar {
     justify-content: space-between;
   }

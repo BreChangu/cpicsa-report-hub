@@ -44,61 +44,40 @@
         </div>
 
         <div class="bulk-toolbar">
-          <label class="bulk-select-toggle">
-            <input
-              type="checkbox"
-              [checked]="areAllSelected()"
-              (change)="toggleSelectAll($any($event.target).checked)"
-            />
-            Seleccionar todas
-          </label>
+          
+          <div class="toolbar-grouped-item">
+            <label class="bulk-select-toggle">
+              <input type="checkbox" [checked]="areAllSelected()" (change)="toggleSelectAll($any($event.target).checked)" />
+              Todas
+            </label>
+            <span class="bulk-count">{{ selectedCount() }} marcadas</span>
+          </div>
 
-          <span class="bulk-count">{{ selectedCount() }} seleccionadas</span>
+          <div class="toolbar-grouped-item">
+            <select [ngModel]="filterCategory()" (ngModelChange)="filterCategory.set($event)" class="tool-input">
+              <option value="">-- Sección existente --</option>
+              @for (cat of dynamicCategories(); track cat) {
+                <option [value]="cat">{{ cat }}</option>
+              }
+            </select>
+            <button class="btn-inline-tool" type="button" (click)="selectByCategory()">Seleccionar grupo</button>
+          </div>
 
-          <span class="divider">|</span>
-
-          <label class="bulk-date-field">
-            <span>Fecha masiva:</span>
-            <input
-              type="date"
-              [ngModel]="bulkCapturedDate()"
-              (ngModelChange)="bulkCapturedDate.set($event)"
-            />
-          </label>
-          <button
-            class="btn-inline-tool"
-            type="button"
-            [disabled]="!hasSelectedEvidences()"
-            (click)="applyBulkCapturedDate()"
-          >
-            Aplicar fecha
-          </button>
-
-          <span class="divider">|</span>
-
-          <label class="bulk-date-field">
-            <span>Sección Múltiple:</span>
-            <input
-              type="text"
-              list="cat-list"
-              [ngModel]="bulkCategory()"
-              (ngModelChange)="bulkCategory.set($event)"
-              placeholder="Nueva o existente..."
-            />
+          <div class="toolbar-grouped-item">
+            <input type="text" list="cat-list" [ngModel]="bulkCategory()" (ngModelChange)="bulkCategory.set($event)" placeholder="Escribe sección..." class="tool-input" />
             <datalist id="cat-list">
               @for (cat of dynamicCategories(); track cat) {
                 <option [value]="cat"></option>
               }
             </datalist>
-          </label>
-          <button
-            class="btn-inline-tool"
-            type="button"
-            [disabled]="!hasSelectedEvidences()"
-            (click)="applyBulkCategory()"
-          >
-            Aplicar sección
-          </button>
+            <button class="btn-inline-tool" type="button" [disabled]="!hasSelectedEvidences()" (click)="applyBulkCategory()">Asignar a marcadas</button>
+          </div>
+          
+          <div class="toolbar-grouped-item">
+             <input type="date" [ngModel]="bulkCapturedDate()" (ngModelChange)="bulkCapturedDate.set($event)" class="tool-input" />
+             <button class="btn-inline-tool" type="button" [disabled]="!hasSelectedEvidences()" (click)="applyBulkCapturedDate()">Aplicar fecha</button>
+          </div>
+
         </div>
 
         <div class="evidence-grid">
@@ -132,9 +111,7 @@
                 <button
                   class="image-preview-hitbox"
                   type="button"
-                  [attr.aria-label]="
-                    item.isCropped ? 'Ver imagen recortada' : 'Ver imagen original'
-                  "
+                  [attr.aria-label]="item.isCropped ? 'Ver imagen recortada' : 'Ver imagen original'"
                   (click)="openPreview(item)"
                 ></button>
                 <img
@@ -178,9 +155,16 @@
 
                   <div class="cropper-footer">
                     <p class="helper-text">Selecciona el área de interés para la imagen final.</p>
-                    <button class="btn-confirm-crop" type="button" (click)="confirmCrop(item.id)">
-                      CONFIRMAR RECORTE
-                    </button>
+                    
+                    <div class="cropper-actions">
+                      <button class="btn-cancel-crop" type="button" (click)="toggleCropper(item.id)">
+                        CANCELAR
+                      </button>
+                      <button class="btn-confirm-crop" type="button" (click)="confirmCrop(item.id)">
+                        CONFIRMAR RECORTE
+                      </button>
+                    </div>
+
                   </div>
                 </div>
               }

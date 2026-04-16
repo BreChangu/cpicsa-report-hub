@@ -50,7 +50,8 @@ export class App implements OnDestroy {
   reportTitle = signal('');
 
   // LÓGICA DE CATEGORÍAS LIBRES
-  bulkCategory = signal('MANTENIMIENTO');
+  bulkCategory = signal(''); // Para asignar
+  filterCategory = signal(''); // Para seleccionar (NUEVO)
   
   dynamicCategories = computed(() => {
     const cats = new Set<string>(['MANTENIMIENTO']); 
@@ -62,7 +63,6 @@ export class App implements OnDestroy {
     return Array.from(cats);
   });
 
-  // --- MÉTODOS DE INGESTA Y EDICIÓN ---
   async onFilesReceived(files: File[]) {
     for (const file of files) {
       const evidenceId = crypto.randomUUID();
@@ -74,7 +74,7 @@ export class App implements OnDestroy {
           previewUrl: this.createPreviewUrl(file),
           description: '',
           capturedDate: this.getTodayDateInputValue(),
-          category: this.bulkCategory().toUpperCase(),
+          category: 'MANTENIMIENTO', // Por defecto
           selected: false,
           isProcessing: true,
           isCropped: false,
@@ -156,6 +156,18 @@ export class App implements OnDestroy {
     this.evidences.update(current => current.map(item => item.selected ? { ...item, capturedDate: date } : item));
   }
 
+  // 👇 LÓGICA DE SELECCIÓN REPARADA 👇
+  selectByCategory() {
+    const targetCat = this.filterCategory().trim().toUpperCase();
+    if (!targetCat) return;
+    this.evidences.update(current => 
+      current.map(item => ({
+        ...item,
+        selected: (item.category || '').trim().toUpperCase() === targetCat
+      }))
+    );
+  }
+
   applyBulkCategory() {
     const cat = this.bulkCategory().trim().toUpperCase();
     if (!cat) return;
@@ -172,8 +184,7 @@ export class App implements OnDestroy {
   @HostListener('window:keydown.escape')
   onEscapeKey() { this.closePreview(); }
 
-
-  // --- MOTOR PDF B2B PREMIUM CON ORDENAMIENTO DE PRIORIDAD ---
+  // --- MOTOR PDF B2B PREMIUM ---
   async generatePdfReport() {
     const evidences = this.evidences();
     if (!evidences.length || this.isGeneratingPdf()) return;
@@ -188,14 +199,12 @@ export class App implements OnDestroy {
 
       const groupedEvidences = this.groupByCategory(evidences);
       
-      // 👇 MAGIA DE ORDENAMIENTO: Mantenimiento siempre primero, el resto alfabético
       const sortedCategories = Object.keys(groupedEvidences).sort((a, b) => {
         if (a === 'MANTENIMIENTO') return -1;
         if (b === 'MANTENIMIENTO') return 1;
         return a.localeCompare(b);
       });
 
-      // Iteramos sobre las categorías ya ordenadas
       for (const category of sortedCategories) {
         const items = groupedEvidences[category];
         const chunks = this.chunkItems(items, 2);
@@ -304,7 +313,7 @@ export class App implements OnDestroy {
     }, {} as Record<string, EvidenceItem[]>);
   }
 
-  // --- MOTOR WORD CON ORDENAMIENTO DE PRIORIDAD ---
+  // --- MOTOR WORD B2B (VERTICAL) ---
   async generateWordReport() {
     const evidences = this.evidences();
     if (!evidences.length || this.isGeneratingWord()) return;
@@ -327,7 +336,6 @@ export class App implements OnDestroy {
     const sections: any[] = [];
     let globalPageIndex = 0;
 
-    // 👇 MAGIA DE ORDENAMIENTO TAMBIÉN PARA WORD
     const sortedCategories = Object.keys(groupedEvidences).sort((a, b) => {
       if (a === 'MANTENIMIENTO') return -1;
       if (b === 'MANTENIMIENTO') return 1;
@@ -342,21 +350,20 @@ export class App implements OnDestroy {
         const pageItems = pages[sectionPageIndex];
 
         const rows = await Promise.all(
-          [0].map(async rowIndex => { 
-            const cells = await Promise.all(
-              [0, 1].map(async columnIndex => {
-                const item = pageItems[rowIndex * 2 + columnIndex];
-                const evidenceIndex = sectionPageIndex * 2 + columnIndex; 
+          [0, 1].map(async rowIndex => { 
+            const item = pageItems[rowIndex];
+            const evidenceIndex = sectionPageIndex * 2 + rowIndex; 
 
-                return new TableCell({
-                  width: { size: 50, type: WidthType.PERCENTAGE }, verticalAlign: VerticalAlign.TOP,
+            return new TableRow({
+              children: [
+                new TableCell({
+                  width: { size: 100, type: WidthType.PERCENTAGE }, verticalAlign: VerticalAlign.TOP,
                   borders: { top: { style: BorderStyle.SINGLE, size: 1, color: '000000' }, bottom: { style: BorderStyle.SINGLE, size: 1, color: '000000' }, left: { style: BorderStyle.SINGLE, size: 1, color: '000000' }, right: { style: BorderStyle.SINGLE, size: 1, color: '000000' } },
                   margins: { top: 160, bottom: 160, left: 160, right: 160 },
                   children: item ? await this.buildWordCellChildren(item, evidenceIndex, docx) : [new Paragraph('')]
-                });
-              })
-            );
-            return new TableRow({ children: cells });
+                })
+              ]
+            });
           })
         );
 
@@ -376,12 +383,12 @@ export class App implements OnDestroy {
         }
 
         pageChildren.push(
-          new Table({ width: { size: 100, type: WidthType.PERCENTAGE }, borders: { top: { style: BorderStyle.NONE, size: 0, color: 'FFFFFF' }, bottom: { style: BorderStyle.NONE, size: 0, color: 'FFFFFF' }, left: { style: BorderStyle.NONE, size: 0, color: 'FFFFFF' }, right: { style: BorderStyle.NONE, size: 0, color: 'FFFFFF' }, insideHorizontal: { style: BorderStyle.NONE, size: 0, color: 'FFFFFF' }, insideVertical: { style: BorderStyle.NONE, size: 0, color: 'FFFFFF' } }, rows }),
+          new Table({ width: { size: 100, type: WidthType.PERCENTAGE }, borders: { top: { style: BorderStyle.NONE, size: 0, color: 'FFFFFF' }, bottom: { style: BorderStyle.NONE, size: 0, color: 'FFFFFF' }, left: { style: BorderStyle.NONE, size: 0, color: 'FFFFFF' }, right: { style: BorderStyle.NONE, size: 0, color: 'FFFFFF' }, insideHorizontal: { style: BorderStyle.NONE, size: 0, color: 'FFFFFF' }, insideVertical: { style: BorderStyle.NONE, size: 0, color: 'FFFFFF' } }, columnWidths: [9000], rows }),
           new Paragraph({ alignment: AlignmentType.CENTER, spacing: { before: 150 }, children: [new TextRun({ text: `Página ${globalPageIndex + 1}`, size: 18, color: '4B5563' })] }),
           this.buildWordFooter(docx)
         );
 
-        sections.push({ properties: { page: { margin: { top: 540, bottom: 540, left: 540, right: 540 }, orientation: PageOrientation.LANDSCAPE } }, children: pageChildren });
+        sections.push({ properties: { page: { margin: { top: 540, bottom: 540, left: 540, right: 540 } } }, children: pageChildren });
         globalPageIndex++;
       }
     }
@@ -394,9 +401,10 @@ export class App implements OnDestroy {
   private async buildWordCellChildren(item: EvidenceItem, evidenceIndex: number, docx: DocxModule) {
     const { AlignmentType, BorderStyle, ImageRun, Paragraph, Table, TableCell, TableRow, TextRun, WidthType } = docx;
     const imageBuffer = await this.getReportImageFile(item).arrayBuffer();
-    const dimensions = await this.getScaledImageDimensions(this.getReportImageFile(item), 220, 240); 
+    const dimensions = await this.getScaledImageDimensions(this.getReportImageFile(item), 400, 260); 
+
     return [
-      new Table({ width: { size: 100, type: WidthType.PERCENTAGE }, columnWidths: [1300, 3200], rows: [ new TableRow({ children: [ new TableCell({ borders: { top: { style: BorderStyle.SINGLE, size: 1, color: '000000' }, bottom: { style: BorderStyle.SINGLE, size: 1, color: '000000' }, left: { style: BorderStyle.SINGLE, size: 1, color: '000000' }, right: { style: BorderStyle.SINGLE, size: 1, color: '000000' } }, margins: { top: 60, bottom: 60, left: 80, right: 80 }, children: [new Paragraph({ alignment: AlignmentType.CENTER, children: [new TextRun({ text: this.formatCapturedDate(item.capturedDate), bold: true, size: 18 })] })] }), new TableCell({ borders: { top: { style: BorderStyle.SINGLE, size: 1, color: '000000' }, bottom: { style: BorderStyle.SINGLE, size: 1, color: '000000' }, left: { style: BorderStyle.SINGLE, size: 1, color: '000000' }, right: { style: BorderStyle.SINGLE, size: 1, color: '000000' } }, margins: { top: 60, bottom: 60, left: 80, right: 80 }, children: [new Paragraph({ children: [new TextRun({ text: `${evidenceIndex + 1}.- `, bold: true, size: 19 }), new TextRun({ text: (item.description.trim() || 'SIN DESCRIPCIÓN CAPTURADA.').toUpperCase(), size: 19 })] })] }) ] }) ] }),
+      new Table({ width: { size: 100, type: WidthType.PERCENTAGE }, columnWidths: [2000, 7000], rows: [ new TableRow({ children: [ new TableCell({ borders: { top: { style: BorderStyle.SINGLE, size: 1, color: '000000' }, bottom: { style: BorderStyle.SINGLE, size: 1, color: '000000' }, left: { style: BorderStyle.SINGLE, size: 1, color: '000000' }, right: { style: BorderStyle.SINGLE, size: 1, color: '000000' } }, margins: { top: 60, bottom: 60, left: 80, right: 80 }, children: [new Paragraph({ alignment: AlignmentType.CENTER, children: [new TextRun({ text: this.formatCapturedDate(item.capturedDate), bold: true, size: 18 })] })] }), new TableCell({ borders: { top: { style: BorderStyle.SINGLE, size: 1, color: '000000' }, bottom: { style: BorderStyle.SINGLE, size: 1, color: '000000' }, left: { style: BorderStyle.SINGLE, size: 1, color: '000000' }, right: { style: BorderStyle.SINGLE, size: 1, color: '000000' } }, margins: { top: 60, bottom: 60, left: 80, right: 80 }, children: [new Paragraph({ children: [new TextRun({ text: `${evidenceIndex + 1}.- `, bold: true, size: 19 }), new TextRun({ text: (item.description.trim() || 'SIN DESCRIPCIÓN CAPTURADA.').toUpperCase(), size: 19 })] })] }) ] }) ] }),
       new Paragraph({ spacing: { after: 70 } }),
       new Paragraph({ alignment: AlignmentType.CENTER, spacing: { after: 50 }, children: [new ImageRun({ type: this.getDocxImageType(this.getReportImageFile(item).type), data: imageBuffer, transformation: dimensions })] })
     ];
