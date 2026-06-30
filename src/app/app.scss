@@ -1,7 +1,6 @@
-/* 👇 ADN DE COLOR CPICSA 👇 */
 $primary-dark: #1e293b;
-$brand-green: #8dc63f; /* Verde Corporativo CPICSA */
-$brand-blue: #00a0e3; /* Azul Corporativo CPICSA */
+$brand-green: #8dc63f;
+$brand-blue: #00a0e3;
 $border-soft: #e2e8f0;
 $surface-soft: #f8fafc;
 $danger-color: #ef4444;
@@ -92,7 +91,6 @@ $danger-color: #ef4444;
     margin: 0;
     font-weight: 800;
   }
-  /* 👇 BOTONES DE ACCIÓN PRINCIPAL (VERDE ACCIÓN CPICSA) 👇 */
   .btn-primary-action {
     background-color: $brand-green;
     color: $primary-dark;
@@ -126,28 +124,130 @@ $danger-color: #ef4444;
   flex-wrap: wrap;
 }
 
-/* 👇 REDISEÑO DE BARRA MASIVA (ESTILO CPICSA) 👇 */
 .bulk-toolbar {
-  display: flex;
-  align-items: center;
-  gap: 1.5rem;
-  flex-wrap: wrap;
-  padding: 1rem 1.25rem;
+  display: grid;
+  gap: 1rem;
+  padding: 1.25rem;
   margin-bottom: 1.5rem;
   border: 1px solid $border-soft;
   border-radius: 12px;
-  background: $surface-soft;
+  background: linear-gradient(180deg, #ffffff 0%, $surface-soft 100%);
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.04);
 }
-.toolbar-grouped-item {
+
+.bulk-toolbar-header {
   display: flex;
   align-items: center;
-  gap: 6px;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid $border-soft;
+  h3 {
+    margin: 0;
+    color: $primary-dark;
+    font-size: 1rem;
+    font-weight: 800;
+  }
+}
+.toolbar-eyebrow {
+  margin: 0 0 0.2rem;
+  color: $brand-blue;
+  font-size: 0.7rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.toolbar-status {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.35rem;
+  color: #64748b;
+  font-size: 0.85rem;
+  font-weight: 700;
+  white-space: nowrap;
+  strong {
+    color: $primary-dark;
+    font-size: 1.35rem;
+  }
+}
+.bulk-toolbar-grid {
+  display: grid;
+  grid-template-columns: minmax(280px, 0.9fr) minmax(320px, 1.1fr);
+  gap: 1rem;
+}
+.toolbar-workflow-group {
+  display: grid;
+  align-content: start;
+  gap: 0.85rem;
+  min-width: 0;
+}
+.workflow-heading {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: 0.75rem;
+  h4 {
+    margin: 0;
+    color: $primary-dark;
+    font-size: 0.9rem;
+    font-weight: 800;
+  }
+  p {
+    margin: 0.15rem 0 0;
+    color: #64748b;
+    font-size: 0.78rem;
+    line-height: 1.35;
+  }
+}
+.step-badge {
+  width: 26px;
+  height: 26px;
+  display: inline-grid;
+  place-items: center;
+  border-radius: 50%;
+  background: rgba($brand-green, 0.2);
+  color: $primary-dark;
+  font-size: 0.8rem;
+  font-weight: 900;
+}
+.toolbar-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  min-width: 0;
+}
+.toolbar-field-action {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: end;
+  .tool-field {
+    min-width: 0;
+  }
+  .btn-inline-tool {
+    white-space: nowrap;
+  }
+}
+.tool-field {
+  display: grid;
+  gap: 0.25rem;
+  min-width: 180px;
+  flex: 1;
+  span {
+    color: #64748b;
+    font-size: 0.72rem;
+    font-weight: 800;
+    text-transform: uppercase;
+  }
 }
 
 .tool-input {
   border: 1px solid $border-soft;
   border-radius: 6px;
-  padding: 6px 10px;
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 34px;
+  padding: 7px 10px;
   font-size: 12px;
   font-weight: 700;
   color: $primary-dark;
@@ -165,7 +265,8 @@ $danger-color: #ef4444;
   background: #fff;
   color: $primary-dark;
   border-radius: 6px;
-  padding: 6px 12px;
+  min-height: 34px;
+  padding: 7px 12px;
   font-size: 12px;
   font-weight: 700;
   cursor: pointer;
@@ -175,7 +276,7 @@ $danger-color: #ef4444;
     border-color: rgba($primary-dark, 0.3);
   }
   &:disabled {
-    cursor: wait;
+    cursor: not-allowed;
     opacity: 0.5;
   }
 }
@@ -192,6 +293,7 @@ $danger-color: #ef4444;
   color: #64748b;
   font-size: 0.85rem;
   font-weight: 600;
+  white-space: nowrap;
 }
 
 .evidence-grid {
@@ -329,7 +431,6 @@ $danger-color: #ef4444;
   }
 }
 
-/* 👇 CROP STATUS BADGE (VERDE CPICSA) 👇 */
 .crop-status-badge {
   position: absolute;
   left: 10px;
@@ -344,7 +445,7 @@ $danger-color: #ef4444;
   border-radius: 4px;
 }
 
-/* 🔥 FIX DEFINITIVO DEL CROPPER (LA JAULA DE HIERRO) 🔥 */
+/* 🔥 FIX DEFINITIVO DEL CROPPER (LA JAULA FLEXIBLE) 🔥 */
 .cropper-global-wrapper {
   background: #0f172a;
   overflow: hidden;
@@ -354,8 +455,7 @@ $danger-color: #ef4444;
 ::ng-deep .cropper-global-wrapper image-cropper {
   display: block !important;
   width: 100% !important;
-  height: 280px !important;
-  max-height: 280px !important;
+  max-height: 400px !important; /* Altura flexible para hacer zoom */
 }
 
 .cropper-footer {
@@ -370,7 +470,26 @@ $danger-color: #ef4444;
     margin-bottom: 12px;
   }
 
-  /* 👇 BOTONES DEL CROPPER ESTILIZADOS CORPORATIVO 👇 */
+  /* 👇 CONTROLES DE ZOOM 👇 */
+  .zoom-controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 15px;
+    padding: 8px;
+    background: white;
+    border-radius: 8px;
+    border: 1px solid $border-soft;
+
+    .zoom-level {
+      font-size: 12px;
+      font-weight: 800;
+      color: $primary-dark;
+      min-width: 80px;
+    }
+  }
+
   .cropper-actions {
     display: flex;
     gap: 10px;
@@ -387,7 +506,6 @@ $danger-color: #ef4444;
       transition: all 0.2s;
     }
 
-    /* 👇 BOTÓN CANCELAR (AZUL SECUNDARIO CPICSA) 👇 */
     .btn-cancel-crop {
       background: #ffffff;
       color: $brand-blue;
@@ -398,7 +516,6 @@ $danger-color: #ef4444;
       }
     }
 
-    /* 👇 BOTÓN CONFIRMAR (VERDE PRIMARIO CPICSA) 👇 */
     .btn-confirm-crop {
       background: $brand-green;
       color: $primary-dark;
@@ -426,26 +543,6 @@ $danger-color: #ef4444;
     margin: 0;
     text-transform: uppercase;
     letter-spacing: 0.5px;
-  }
-}
-
-.btn-inline-tool {
-  border: 1px solid $border-soft;
-  background: #fff;
-  color: $primary-dark;
-  border-radius: 6px;
-  padding: 4px 10px;
-  font-size: 11px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: all 0.2s;
-  &:hover:not(:disabled) {
-    background: $surface-soft;
-    border-color: rgba($primary-dark, 0.3);
-  }
-  &:disabled {
-    cursor: wait;
-    opacity: 0.5;
   }
 }
 
@@ -568,7 +665,26 @@ $danger-color: #ef4444;
       box-sizing: border-box;
     }
   }
+  .bulk-toolbar-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+  .bulk-toolbar-grid {
+    grid-template-columns: 1fr;
+  }
   .bulk-toolbar {
-    justify-content: space-between;
+    padding: 1rem;
+  }
+  .toolbar-row {
+    align-items: stretch;
+    > .btn-inline-tool {
+      flex: 1 1 140px;
+    }
+  }
+  .toolbar-field-action {
+    grid-template-columns: 1fr;
+  }
+  .tool-field {
+    min-width: 100%;
   }
 }

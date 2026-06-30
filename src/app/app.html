@@ -1,6 +1,6 @@
 <main class="main-container">
   <header class="app-header">
-    <div class="logo-placeholder">Auditoría de Estructuras</div>
+    <div class="logo-placeholder">Reporte de Puntos Críticos</div>
   </header>
 
   <section class="content">
@@ -43,41 +43,130 @@
           </label>
         </div>
 
-        <div class="bulk-toolbar">
-          
-          <div class="toolbar-grouped-item">
-            <label class="bulk-select-toggle">
-              <input type="checkbox" [checked]="areAllSelected()" (change)="toggleSelectAll($any($event.target).checked)" />
-              Todas
-            </label>
-            <span class="bulk-count">{{ selectedCount() }} marcadas</span>
+        <div class="bulk-toolbar" aria-label="Herramientas de edición rápida">
+          <div class="bulk-toolbar-header">
+            <div>
+              <p class="toolbar-eyebrow">Edición rápida</p>
+              <h3>Modificar evidencias por lote</h3>
+            </div>
+            <div class="toolbar-status">
+              <strong>{{ selectedCount() }}</strong>
+              <span>de {{ evidences().length }} seleccionadas</span>
+            </div>
           </div>
 
-          <div class="toolbar-grouped-item">
-            <select [ngModel]="filterCategory()" (ngModelChange)="filterCategory.set($event)" class="tool-input">
-              <option value="">-- Sección existente --</option>
-              @for (cat of dynamicCategories(); track cat) {
-                <option [value]="cat">{{ cat }}</option>
-              }
-            </select>
-            <button class="btn-inline-tool" type="button" (click)="selectByCategory()">Seleccionar grupo</button>
-          </div>
+          <div class="bulk-toolbar-grid">
+            <section class="toolbar-workflow-group" aria-labelledby="selection-tools-title">
+              <div class="workflow-heading">
+                <span class="step-badge">1</span>
+                <div>
+                  <h4 id="selection-tools-title">Elige evidencias</h4>
+                  <p>Marca todas o selecciona una sección completa.</p>
+                </div>
+              </div>
 
-          <div class="toolbar-grouped-item">
-            <input type="text" list="cat-list" [ngModel]="bulkCategory()" (ngModelChange)="bulkCategory.set($event)" placeholder="Escribe sección..." class="tool-input" />
-            <datalist id="cat-list">
-              @for (cat of dynamicCategories(); track cat) {
-                <option [value]="cat"></option>
-              }
-            </datalist>
-            <button class="btn-inline-tool" type="button" [disabled]="!hasSelectedEvidences()" (click)="applyBulkCategory()">Asignar a marcadas</button>
-          </div>
-          
-          <div class="toolbar-grouped-item">
-             <input type="date" [ngModel]="bulkCapturedDate()" (ngModelChange)="bulkCapturedDate.set($event)" class="tool-input" />
-             <button class="btn-inline-tool" type="button" [disabled]="!hasSelectedEvidences()" (click)="applyBulkCapturedDate()">Aplicar fecha</button>
-          </div>
+              <div class="toolbar-row">
+                <label class="bulk-select-toggle">
+                  <input
+                    type="checkbox"
+                    [checked]="areAllSelected()"
+                    (change)="toggleSelectAll($any($event.target).checked)"
+                  />
+                  Todas
+                </label>
+                <span class="bulk-count">{{ unselectedCount() }} sin marcar</span>
+                <button
+                  class="btn-inline-tool"
+                  type="button"
+                  [disabled]="!hasSelectedEvidences()"
+                  (click)="clearSelection()"
+                >
+                  Limpiar
+                </button>
+              </div>
 
+              <div class="toolbar-row toolbar-field-action">
+                <label class="tool-field">
+                  <span>Sección</span>
+                  <select
+                    [ngModel]="filterCategory()"
+                    (ngModelChange)="filterCategory.set($event)"
+                    class="tool-input"
+                  >
+                    <option value="">Selecciona sección</option>
+                    @for (cat of categoryOptions(); track cat.name) {
+                      <option [value]="cat.name">{{ cat.name }} ({{ cat.count }})</option>
+                    }
+                  </select>
+                </label>
+                <button
+                  class="btn-inline-tool"
+                  type="button"
+                  [disabled]="!hasFilterCategory()"
+                  (click)="selectByCategory()"
+                >
+                  Marcar sección
+                </button>
+              </div>
+            </section>
+
+            <section class="toolbar-workflow-group" aria-labelledby="bulk-edit-tools-title">
+              <div class="workflow-heading">
+                <span class="step-badge">2</span>
+                <div>
+                  <h4 id="bulk-edit-tools-title">Actualiza los datos</h4>
+                  <p>Aplica cambios solo a las evidencias marcadas.</p>
+                </div>
+              </div>
+
+              <div class="toolbar-row toolbar-field-action">
+                <label class="tool-field">
+                  <span>Nueva sección</span>
+                  <input
+                    type="text"
+                    list="cat-list"
+                    [ngModel]="bulkCategory()"
+                    (ngModelChange)="bulkCategory.set($event)"
+                    placeholder="Ej. COCINA"
+                    class="tool-input"
+                  />
+                </label>
+                <datalist id="cat-list">
+                  @for (cat of dynamicCategories(); track cat) {
+                    <option [value]="cat"></option>
+                  }
+                </datalist>
+                <button
+                  class="btn-inline-tool"
+                  type="button"
+                  [disabled]="!canApplyBulkCategory()"
+                  (click)="applyBulkCategory()"
+                >
+                  Asignar sección
+                </button>
+              </div>
+
+              <div class="toolbar-row toolbar-field-action">
+                <label class="tool-field">
+                  <span>Fecha de captura</span>
+                  <input
+                    type="date"
+                    [ngModel]="bulkCapturedDate()"
+                    (ngModelChange)="bulkCapturedDate.set($event)"
+                    class="tool-input"
+                  />
+                </label>
+                <button
+                  class="btn-inline-tool"
+                  type="button"
+                  [disabled]="!canApplyBulkCapturedDate()"
+                  (click)="applyBulkCapturedDate()"
+                >
+                  Aplicar fecha
+                </button>
+              </div>
+            </section>
+          </div>
         </div>
 
         <div class="evidence-grid">
@@ -102,16 +191,24 @@
                   [(ngModel)]="item.category"
                   class="mini-category-input"
                   placeholder="SECCIÓN..."
+                  aria-label="Sección de la evidencia"
                 />
 
-                <input type="date" [(ngModel)]="item.capturedDate" class="mini-date" />
+                <input
+                  type="date"
+                  [(ngModel)]="item.capturedDate"
+                  class="mini-date"
+                  aria-label="Fecha de captura"
+                />
               </div>
 
               <div class="image-container" [hidden]="item.showCropper">
                 <button
                   class="image-preview-hitbox"
                   type="button"
-                  [attr.aria-label]="item.isCropped ? 'Ver imagen recortada' : 'Ver imagen original'"
+                  [attr.aria-label]="
+                    item.isCropped ? 'Ver imagen recortada' : 'Ver imagen original'
+                  "
                   (click)="openPreview(item)"
                 ></button>
                 <img
@@ -147,6 +244,7 @@
                     [imageFile]="item.sourceFile"
                     [maintainAspectRatio]="false"
                     [alignImage]="'center'"
+                    [transform]="{ scale: currentZoom() }"
                     output="blob"
                     format="png"
                     (imageCropped)="onImageCropped($event, item.id)"
@@ -155,16 +253,46 @@
 
                   <div class="cropper-footer">
                     <p class="helper-text">Selecciona el área de interés para la imagen final.</p>
-                    
+
+                    <div class="zoom-controls">
+                      <button
+                        class="btn-inline-tool"
+                        type="button"
+                        (click)="zoomOut()"
+                        [disabled]="currentZoom() <= 1"
+                      >
+                        Alejar
+                      </button>
+                      <span class="zoom-level">Zoom: {{ (currentZoom() * 100).toFixed(0) }}%</span>
+                      <button
+                        class="btn-inline-tool"
+                        type="button"
+                        (click)="zoomIn()"
+                        [disabled]="currentZoom() >= 5"
+                      >
+                        Acercar
+                      </button>
+                      <button
+                        class="btn-inline-tool btn-danger-tool"
+                        type="button"
+                        (click)="resetZoom()"
+                      >
+                        Reiniciar
+                      </button>
+                    </div>
+
                     <div class="cropper-actions">
-                      <button class="btn-cancel-crop" type="button" (click)="toggleCropper(item.id)">
+                      <button
+                        class="btn-cancel-crop"
+                        type="button"
+                        (click)="toggleCropper(item.id)"
+                      >
                         CANCELAR
                       </button>
                       <button class="btn-confirm-crop" type="button" (click)="confirmCrop(item.id)">
                         CONFIRMAR RECORTE
                       </button>
                     </div>
-
                   </div>
                 </div>
               }

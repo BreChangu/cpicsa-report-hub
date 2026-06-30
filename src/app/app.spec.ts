@@ -14,10 +14,13 @@ describe('App', () => {
     expect(app).toBeTruthy();
   });
 
-  it('should render title', async () => {
+  it('should render the report workspace title', async () => {
     const fixture = TestBed.createComponent(App);
+    fixture.detectChanges();
     await fixture.whenStable();
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('h1')?.textContent).toContain('Hello, cpicsa-report-hub');
+    expect(compiled.querySelector('.logo-placeholder')?.textContent).toContain(
+      'Reporte de Puntos Críticos',
+    );
   });
 });
